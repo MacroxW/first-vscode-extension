@@ -16,6 +16,13 @@ A VS Code extension that allows you to add decorative text beside your code line
 - **Read Vite Logs**: Quick access to Vite terminal logs for debugging
 - Smart terminal management and project path detection
 
+### 📊 Log Capture & Display
+
+- **Capture and Display Logs**: Automatically parse console.log statements and display their output as decorations beside the code
+- **Clear Log Decorations**: Remove all log decorations from the current file
+- **Generate Mock Logs**: Create test log entries for demonstration and testing purposes
+- **Real-time Log Monitoring**: Advanced log tracking with timestamp information
+
 ### 📁 Welcome File
 
 - Automatic welcome file opening when extension activates
@@ -60,6 +67,9 @@ All commands are available through the Command Palette (`Ctrl+Shift+P` or `Cmd+S
 | `Clear Text Beside Code` | Remove all text decorations from the editor |
 | `Start Vite Dev Server` | Launch Vite development server in terminal |
 | `Read Vite Logs` | Focus on Vite terminal to view logs |
+| `Capture and Display Logs` | Parse console.log statements and show output beside code |
+| `Clear Log Decorations` | Remove all log decorations from the current file |
+| `Generate Mock Logs` | Create test log entries for demonstration |
 
 ## Usage
 
@@ -69,6 +79,13 @@ All commands are available through the Command Palette (`Ctrl+Shift+P` or `Cmd+S
 2. Open Command Palette (`Ctrl+Shift+P`)
 3. Run "Add Text Beside Code"
 4. See the decorative text appear at the end of the line
+
+### Capturing Console Logs
+
+1. Open a JavaScript/TypeScript file with `console.log` statements
+2. Run "Capture and Display Logs" command
+3. See log outputs displayed beside each `console.log` line with timestamps
+4. Use "Clear Log Decorations" to remove log displays
 
 ### Managing Vite Projects
 

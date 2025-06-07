@@ -117,7 +117,40 @@ export function activate(context: vscode.ExtensionContext) {
 		ViteProjectManager.readViteLogs();
 	});
 
-	context.subscriptions.push(disposable, addTextDisposable, clearTextDisposable, startViteDisposable, readViteLogsDisposable);
+	// Command to capture and display logs
+	const captureLogsDisposable = vscode.commands.registerCommand('helloworld.captureAndDisplayLogs', async () => {
+		await ViteProjectManager.captureAndDisplayLogs();
+	});
+
+	// Command to clear log decorations
+	const clearLogsDisposable = vscode.commands.registerCommand('helloworld.clearLogDecorations', () => {
+		const editor = vscode.window.activeTextEditor;
+		if (editor) {
+			ViteProjectManager.clearLogDecorations(editor.document.fileName);
+		}
+	});
+
+	// Command to generate mock logs for testing
+	const generateMockLogsDisposable = vscode.commands.registerCommand('helloworld.generateMockLogs', async () => {
+		const editor = vscode.window.activeTextEditor;
+		if (editor) {
+			// Instead of just generating, actually capture and display the logs
+			await ViteProjectManager.captureAndDisplayLogs();
+		} else {
+			vscode.window.showErrorMessage('No active editor. Please open a file with console.log statements.');
+		}
+	});
+
+	context.subscriptions.push(
+		disposable, 
+		addTextDisposable, 
+		clearTextDisposable, 
+		startViteDisposable, 
+		readViteLogsDisposable,
+		captureLogsDisposable,
+		clearLogsDisposable,
+		generateMockLogsDisposable
+	);
 }
 
 // This method is called when your extension is deactivated

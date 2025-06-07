@@ -1,4 +1,4 @@
-import './style.css'
+import './style.css';
 
 document.querySelector('#app').innerHTML = `
   <div>
@@ -23,8 +23,9 @@ document.querySelector('#app').innerHTML = `
       <a href="https://vitejs.dev" target="_blank">Learn more about Vite</a>
     </p>
   </div>
-`
+`;
 
-console.log('🎉 Hello from Test Vite Project!')
-console.log('🔍 Perfect for testing extension logs!')
-console.log('⚡ HMR is ready to go!')
+console.log('🎉 Hello from Test Vite Project!');
+console.log('🔍 Perfect for testing extension logs!');
+console.log('⚡ HMR is ready to go!');
+1

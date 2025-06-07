@@ -49,6 +49,18 @@
       {
         "command": "helloworld.readViteLogs",
         "title": "Read Vite Logs"
+      },
+      {
+        "command": "helloworld.captureAndDisplayLogs",
+        "title": "Capture and Display Logs"
+      },
+      {
+        "command": "helloworld.clearLogDecorations",
+        "title": "Clear Log Decorations"
+      },
+      {
+        "command": "helloworld.generateMockLogs",
+        "title": "Generate Mock Logs for Testing"
       }
     ]
   },

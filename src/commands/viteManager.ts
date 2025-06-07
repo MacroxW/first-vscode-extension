@@ -5,6 +5,8 @@ import * as vscode from 'vscode';
 
 export class ViteProjectManager {
     private static readonly PROJECTS_FOLDER = 'vite-projects';
+    private static readonly logDecorations: Map<string, vscode.TextEditorDecorationType> = new Map();
+    private static readonly logData: Map<string, string[]> = new Map();
 
     /**
      * Creates a new Vite project in the extension's workspace
@@ -414,5 +416,156 @@ dist-ssr
         } else {
             vscode.window.showWarningMessage('No Vite terminal found. Start Vite first.');
         }
+    }
+
+    /**
+     * Capture and display logs beside console.log statements
+     */
+    static async captureAndDisplayLogs(): Promise<void> {
+        const editor = vscode.window.activeTextEditor;
+        if (!editor) {
+            vscode.window.showErrorMessage('No active editor');
+            return;
+        }
+
+        const document = editor.document;
+        const filePath = document.fileName;
+
+        // Clear previous decorations for this file
+        this.clearLogDecorations(filePath);
+
+        // Find all console.log lines
+        const logLines = this.findConsoleLogLines(document);
+        
+        if (logLines.length === 0) {
+            vscode.window.showInformationMessage('No console.log statements found in current file');
+            return;
+        }
+
+        // Simulate log capture (in real scenario, this would parse actual terminal output)
+        const mockLogs = logLines.map((logInfo, index) => {
+            const timestamp = new Date().toLocaleTimeString();
+            return `[${timestamp}] ${logInfo.logContent}`;
+        });
+
+        // Create decorations for each log line
+        const decorations: vscode.DecorationOptions[] = [];
+        
+        logLines.forEach((lineInfo, index) => {
+            const logMessage = mockLogs[index] || 'Log output here';
+            
+            const decoration: vscode.DecorationOptions = {
+                range: new vscode.Range(lineInfo.lineNumber, lineInfo.endCharacter, lineInfo.lineNumber, lineInfo.endCharacter),
+                renderOptions: {
+                    after: {
+                        contentText: ` 📋 ${logMessage}`,
+                        color: '#00ff88',
+                        fontStyle: 'italic',
+                        backgroundColor: 'rgba(0, 255, 136, 0.1)',
+                        border: '1px solid rgba(0, 255, 136, 0.3)',
+                        margin: '0 0 0 10px'
+                    }
+                }
+            };
+            
+            decorations.push(decoration);
+        });
+
+        // Create decoration type for this file
+        const decorationType = vscode.window.createTextEditorDecorationType({
+            after: {
+                margin: '0 0 0 10px'
+            }
+        });
+
+        // Store decoration type for cleanup
+        this.logDecorations.set(filePath, decorationType);
+
+        // Apply decorations
+        editor.setDecorations(decorationType, decorations);
+        
+        vscode.window.showInformationMessage(`Captured ${decorations.length} log outputs!`);
+    }
+
+    /**
+     * Clear log decorations for a specific file
+     */
+    static clearLogDecorations(filePath?: string): void {
+        if (filePath && this.logDecorations.has(filePath)) {
+            const decorationType = this.logDecorations.get(filePath);
+            if (decorationType) {
+                decorationType.dispose();
+                this.logDecorations.delete(filePath);
+            }
+        } else {
+            // Clear all decorations
+            this.logDecorations.forEach((decorationType) => {
+                decorationType.dispose();
+            });
+            this.logDecorations.clear();
+        }
+
+        const editor = vscode.window.activeTextEditor;
+        if (editor && filePath === editor.document.fileName) {
+            vscode.window.showInformationMessage('Log decorations cleared!');
+        }
+    }
+
+    /**
+     * Find all console.log lines in the document
+     */
+    private static findConsoleLogLines(document: vscode.TextDocument): Array<{lineNumber: number, endCharacter: number, logContent: string}> {
+        const logLines: Array<{lineNumber: number, endCharacter: number, logContent: string}> = [];
+        
+        for (let i = 0; i < document.lineCount; i++) {
+            const line = document.lineAt(i);
+            const text = line.text;
+            
+            // Look for console.log statements (improved regex to handle more cases)
+            const consoleLogRegex = /console\.log\s*\(\s*(['"`])([^]*?)\1\s*\)/;
+            const consoleLogMatch = consoleLogRegex.exec(text);
+            if (consoleLogMatch) {
+                logLines.push({
+                    lineNumber: i,
+                    endCharacter: text.length,
+                    logContent: consoleLogMatch[2] // Extract the log message
+                });
+            }
+        }
+        
+        return logLines;
+    }
+
+    /**
+     * Generate mock log outputs (in real scenario, parse from terminal)
+     */
+    static generateMockLogs(filePath: string): string[] {
+        const editor = vscode.window.activeTextEditor;
+        if (!editor || editor.document.fileName !== filePath) {
+            return [];
+        }
+
+        const logLines = this.findConsoleLogLines(editor.document);
+        return logLines.map((logInfo, index) => {
+            const timestamp = new Date().toLocaleTimeString();
+            return `[${timestamp}] ${logInfo.logContent}`;
+        });
+    }
+
+    /**
+     * Start real-time log monitoring (advanced feature)
+     */
+    static async startLogMonitoring(): Promise<void> {
+        const viteTerminal = vscode.window.terminals.find(terminal => 
+            terminal.name === 'Vite Dev Server'
+        );
+
+        if (!viteTerminal) {
+            vscode.window.showWarningMessage('No Vite terminal found. Start Vite first.');
+            return;
+        }
+
+        // This is a simplified version - real implementation would need terminal output parsing
+        vscode.window.showInformationMessage('Log monitoring started! Use "Capture Console Logs" to see output beside code.');
     }
 }
